@@ -33,8 +33,8 @@
                  (xml/element :GrpHdr {}
                               (xml/element :MsgId {} message-id)
                               (xml/element :CreDtTm {} now)
-                              (xml/element :NbOfTxs {} "1")
-                              (xml/element :CtrlSum {} "100.01")
+                              (xml/element :NbOfTxs {} (str (reduce + (map (fn [a] (count (:payments (last a)))) payment-groups))))
+                              (xml/element :CtrlSum {} (format "%.2f" (reduce + (map (fn [a] (reduce + (map (fn [b] (:sum b)) (:payments (last a))))) payment-groups))))
                               (xml/element :InitgPty {}
                                            (xml/element :Id {}
                                                         (xml/element :OrgId {}
@@ -42,11 +42,11 @@
                                                                                   (xml/element :Id {} (:contract-id debitor-info))
                                                                                   (xml/element :SchmeNm {}
                                                                                                (xml/element :Cd {} "BANK")))))))
-                 (for [[payment-group-id payments]  payment-groups]
+                 (for [[payment-group-id payment-group]  payment-groups]
                    (xml/element :PmtInf {}
                                (xml/element :PmtInfId {} payment-group-id)
                                (xml/element :PmtMtd {} "TRF")
-                               (xml/element :ReqdExctnDt {} (ft/unparse (:date ft/formatters) (tm/now)))
+                               (xml/element :ReqdExctnDt {} (:due-date payment-group))
                                (xml/element :Dbtr {}
                                            (xml/element :Nm {} (:name debitor-info)))
                                (xml/element :DbtrAcct {}
@@ -76,10 +76,10 @@
                                                                                                         (xml/element :CdOrPrtry {}
                                                                                                                      (xml/element :Cd {} "SCOR"))
                                                                                                         (xml/element :Issr {} "ISO"))
-                                                                                           (xml/element :Ref {} (:reference-number payment))))))) payments)))))))
+                                                                                           (xml/element :Ref {} (:reference-number payment))))))) (:payments payment-group))))))))
 
-(Given #"^payment group \"([^\"]*)\" with pending payments$" [arg1 arg2]
-  (swap! payment-groups assoc arg1 (table->rows arg2)))
+(Given #"^payment group \"([^\"]*)\" with due date \"([^\"]*)\" with pending payments$" [arg1 due-date arg2]
+  (swap! payment-groups assoc arg1 {:due-date due-date :payments (table->rows arg2)}))
 
 (When #"^I create payment XML \"([^\"]*)\" with debitor information \"([^\"]*)\" / \"([^\"]*)\" / \"([^\"]*)\" / \"([^\"]*)\" including payment groups$" [message-id arg1 arg2 arg3 arg4 arg5]
   (let [p-groups (map #(:payment-group %) (table->rows arg5))
