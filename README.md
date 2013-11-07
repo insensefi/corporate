@@ -1,14 +1,14 @@
 # corporate
 
-A Clojure library designed to ... well, that part is up to you.
+A library for generating and parsing ISO 20022 messages
 
 ## Usage
 
-FIXME
+TODO
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Niklas Närhinen
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
