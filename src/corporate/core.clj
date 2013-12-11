@@ -57,7 +57,9 @@
                                                                                            (xml/element :Tp {}
                                                                                                         (xml/element :CdOrPrtry {}
                                                                                                                      (xml/element :Cd {} "SCOR"))
-                                                                                                        (xml/element :Issr {} "ISO"))
-                                                                                           (xml/element :Ref {} (:reference-number payment))))))) (:payments payment-group))))))))
+                                                                                                        (if (:rf-reference-number payment) (xml/element :Issr {} "ISO")))
+                                                                                           (xml/element :Ref {}
+                                                                                                        (str (or (:rf-reference-number payment)
+                                                                                                            (:reference-number payment))))))))) (:payments payment-group))))))))
 
 
