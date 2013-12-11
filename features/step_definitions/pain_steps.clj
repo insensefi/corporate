@@ -2,8 +2,8 @@
 (require '[clj-time.coerce :as coerce])
 (require '[corporate.core :as corp])
 (require '[clojure.data.xml :as xml])
+(require '[shared :as shared])
 (def payment-groups (atom {}))
-(def xml (atom nil))
 
 (defn ppxml [xml]
   (let [in (javax.xml.transform.stream.StreamSource.
@@ -32,7 +32,7 @@
              :contract-id arg2
              :iban arg3
              :bic arg4} (select-keys @payment-groups (for [[k v] @payment-groups :when (some #{k} p-groups)] k)))]
-    (reset! xml x)))
+    (reset! shared/xml x)))
 
 (defn assert-string-equals [expected actual]
   (try (assert (= expected actual))
@@ -49,4 +49,4 @@
          (org.joda.time.DateTimeUtils/setCurrentMillisFixed l)))
 
 (Then #"^the XML should be$" [arg1]
-      (assert-string-equals (ppxml arg1) (ppxml (xml/emit-str @xml))))
+      (assert-string-equals (ppxml arg1) (ppxml (xml/emit-str @shared/xml))))
