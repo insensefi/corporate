@@ -42,6 +42,17 @@ Background:
           <ReqdExctnDt>2013-11-15</ReqdExctnDt>
           <Dbtr>
             <Nm>Oy Company Ab</Nm>
+            <Id>
+              <OrgId>
+                <BICOrBEI>NDEAFIHH</BICOrBEI>
+                <Othr>
+                  <Id>87654321</Id>
+                  <SchmeNm>
+                    <Cd>BANK</Cd>
+                  </SchmeNm>
+                </Othr>
+              </OrgId>
+            </Id>
           </Dbtr>
           <DbtrAcct>
             <Id>
@@ -130,6 +141,17 @@ Scenario: One SEPA payment with international RF reference
           <ReqdExctnDt>2013-11-15</ReqdExctnDt>
           <Dbtr>
             <Nm>Oy Company Ab</Nm>
+            <Id>
+              <OrgId>
+                <BICOrBEI>NDEAFIHH</BICOrBEI>
+                <Othr>
+                  <Id>87654321</Id>
+                  <SchmeNm>
+                    <Cd>BANK</Cd>
+                  </SchmeNm>
+                </Othr>
+              </OrgId>
+            </Id>
           </Dbtr>
           <DbtrAcct>
             <Id>
@@ -220,6 +242,17 @@ Scenario: Multiple SEPA payments with same due date with international RF refere
           <ReqdExctnDt>2013-11-15</ReqdExctnDt>
           <Dbtr>
             <Nm>Oy Company Ab</Nm>
+            <Id>
+              <OrgId>
+                <BICOrBEI>NDEAFIHH</BICOrBEI>
+                <Othr>
+                  <Id>87654321</Id>
+                  <SchmeNm>
+                    <Cd>BANK</Cd>
+                  </SchmeNm>
+                </Othr>
+              </OrgId>
+            </Id>
           </Dbtr>
           <DbtrAcct>
             <Id>
@@ -381,6 +414,17 @@ Scenario: Multiple SEPA payments with different due date with international RF r
           <ReqdExctnDt>2013-11-15</ReqdExctnDt>
           <Dbtr>
             <Nm>Oy Company Ab</Nm>
+            <Id>
+              <OrgId>
+                <BICOrBEI>NDEAFIHH</BICOrBEI>
+                <Othr>
+                  <Id>87654321</Id>
+                  <SchmeNm>
+                    <Cd>BANK</Cd>
+                  </SchmeNm>
+                </Othr>
+              </OrgId>
+            </Id>
           </Dbtr>
           <DbtrAcct>
             <Id>
@@ -433,6 +477,17 @@ Scenario: Multiple SEPA payments with different due date with international RF r
           <ReqdExctnDt>2013-11-10</ReqdExctnDt>
           <Dbtr>
             <Nm>Oy Company Ab</Nm>
+            <Id>
+              <OrgId>
+                <BICOrBEI>NDEAFIHH</BICOrBEI>
+                <Othr>
+                  <Id>87654321</Id>
+                  <SchmeNm>
+                    <Cd>BANK</Cd>
+                  </SchmeNm>
+                </Othr>
+              </OrgId>
+            </Id>
           </Dbtr>
           <DbtrAcct>
             <Id>

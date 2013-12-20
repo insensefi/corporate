@@ -30,7 +30,14 @@
                                (xml/element :PmtMtd {} "TRF")
                                (xml/element :ReqdExctnDt {} (:due-date payment-group))
                                (xml/element :Dbtr {}
-                                           (xml/element :Nm {} (:name debitor-info)))
+                                           (xml/element :Nm {} (:name debitor-info))
+                                            (xml/element :Id {}
+                                                         (xml/element :OrgId {}
+                                                                      (xml/element :BICOrBEI {} (:bic debitor-info))
+                                                                      (xml/element :Othr {}
+                                                                                   (xml/element :Id {} (:contract-id debitor-info))
+                                                                                   (xml/element :SchmeNm {}
+                                                                                                (xml/element :Cd {} "BANK"))))))
                                (xml/element :DbtrAcct {}
                                            (xml/element :Id {}
                                                        (xml/element :IBAN {} (:iban debitor-info))))
