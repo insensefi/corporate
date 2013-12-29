@@ -6,5 +6,6 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/data.xml "0.0.7"]
                  [clj-time "0.6.0"]
+                 [org.clojure/data.zip "0.1.1"]
                  [com.googlecode.java-diff-utils/diffutils "1.2.1"]]
   :plugins [[lein-cucumber "1.0.2"]])
