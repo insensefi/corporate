@@ -50,3 +50,7 @@
 
 (Then #"^the XML should be$" [arg1]
       (assert-string-equals (ppxml arg1) (ppxml (xml/emit-str @shared/xml))))
+
+
+(When #"^I parse the xml payload as pain.002.001.03$" []
+  (reset! s/parsed (corp/pain-002-001-03 @s/xml-payload)))

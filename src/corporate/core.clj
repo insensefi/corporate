@@ -5,6 +5,13 @@
             [clj-time.core :as tm])
   (:use [clojure.data.zip.xml :only (text attr xml->)]))
 
+(defn pain-002-001-03 [xml-str]
+  (let [xml (xml/parse-str xml-str)
+        report (first (:content xml))
+        zipped (zip/xml-zip report)]
+    {:original-group-information-and-status {:original-message-identification (first (xml-> zipped :OrgnlGrpInfAndSts :OrgnlMsgId text))
+                                             :original-message-name-identification (first (xml-> zipped :OrgnlGrpInfAndSts :OrgnlMsgNmId text))
+                                             :group-status (first (xml-> zipped :OrgnlGrpInfAndSts :GrpSts text))}}))
 (defn camt-052-001-02 [xml-str]
   (let [xml (xml/parse-str xml-str)
         report (first (:content xml))
@@ -91,6 +98,7 @@
                                                                                            (xml/element :Ref {}
                                                                                                         (str (or (:rf-reference-number payment)
                                                                                                             (:reference-number payment))))))))) (:payments payment-group))))))))
+
 
 (defn camt-060-001-02 [data]
   (let [now (ft/unparse (:date-hour-minute-second ft/formatters) (tm/now))]
