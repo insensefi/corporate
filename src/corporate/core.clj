@@ -3,7 +3,8 @@
             [clojure.zip :as zip]
             [clj-time.format :as ft]
             [clj-time.core :as tm])
-  (:use [clojure.data.zip.xml :only (text attr xml->)]))
+  (:use [clojure.data.zip.xml :only (text attr xml->)]
+        [clojure.data.zip :only (children)]))
 
 (defn pain-002-001-03 [xml-str]
   (let [xml (xml/parse-str xml-str)
@@ -11,7 +12,9 @@
         zipped (zip/xml-zip report)]
     {:original-group-information-and-status {:original-message-identification (first (xml-> zipped :OrgnlGrpInfAndSts :OrgnlMsgId text))
                                              :original-message-name-identification (first (xml-> zipped :OrgnlGrpInfAndSts :OrgnlMsgNmId text))
-                                             :group-status (first (xml-> zipped :OrgnlGrpInfAndSts :GrpSts text))}}))
+                                             :group-status (first (xml-> zipped :OrgnlGrpInfAndSts :GrpSts text))
+                                             :status-reason-information (if (seq (xml-> zipped :OrgnlGrpInfAndSts :StsRsnInf children)) {:reason-code (first (xml-> zipped :OrgnlGrpInfAndSts :StsRsnInf :Rsn :Cd text))
+                                                                         :additional-information (apply str (xml-> zipped :OrgnlGrpInfAndSts :StsRsnInf :AddtlInf text))})}}))
 (defn camt-052-001-02 [xml-str]
   (let [xml (xml/parse-str xml-str)
         report (first (:content xml))
