@@ -2,7 +2,8 @@
   (:require [clojure.data.xml :as xml]
             [clojure.zip :as zip]
             [clj-time.format :as ft]
-            [clj-time.core :as tm])
+            [clj-time.core :as tm]
+            [named-re.core])
   (:use [clojure.data.zip.xml :only (text attr xml->)]
         [clojure.data.zip :only (children)]))
 
@@ -130,3 +131,22 @@
                                                         (xml/element :FrTm {} (:from-time data)))
                                            (xml/element :Tp {} (:type data))))))))
  
+
+(defn tito [txt]
+  (let [formatter (ft/formatter "yyMMdd")
+        date-formatter (:year-month-day ft/formatters)
+        lines (clojure.string/split-lines txt)
+        header-line (first lines)]
+    (if-let [header-raw (dissoc (first (re-seq #"T00.{3}.{3}(?<bban>.{14})(?<statementnumber>.{3})(?<datestart>.{6})(?<dateend>.{6})(?<creationdate>.{6})(?<creationtime>.{4})(?<contractid>.{17}).{31}(?<currency>.{3})(?<accountname>.{30}).{18}(?<accountownername>.{35})(?<bankcontactinformation>.{40})(?<bankcontactinformationdetails>.{40}).*" header-line)) :0)]
+      {:header {:bban (:bban header-raw)
+                :statement-number (read-string (clojure.string/replace (:statementnumber header-raw) #"^0*" ""))
+                :date-start (ft/unparse date-formatter (ft/parse formatter (:datestart header-raw)))
+                :date-end (ft/unparse date-formatter (ft/parse formatter (:dateend header-raw)))
+                :creation-date (ft/unparse date-formatter (ft/parse formatter (:creationdate header-raw)))
+                :creation-time (clojure.string/join ":" (map (partial apply str) (split-at 2 (:creationtime header-raw))))
+                :contract-id (clojure.string/trim (:contractid header-raw))
+                :currency (:currency header-raw)
+                :account-name (clojure.string/trim (:accountname header-raw))
+                :account-owner-name (clojure.string/trim (:accountownername header-raw))
+                :bank-contact-information (clojure.string/trim (:bankcontactinformation header-raw))
+                :bank-contact-information-details (clojure.string/trim (:bankcontactinformationdetails header-raw))}})))

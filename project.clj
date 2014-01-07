@@ -7,5 +7,6 @@
                  [org.clojure/data.xml "0.0.7"]
                  [clj-time "0.6.0"]
                  [org.clojure/data.zip "0.1.1"]
+                 [named-re "1.0.0"]
                  [com.googlecode.java-diff-utils/diffutils "1.2.1"]]
   :plugins [[lein-cucumber "1.0.2"]])
