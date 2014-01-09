@@ -150,3 +150,63 @@
                 :account-owner-name (clojure.string/trim (:accountownername header-raw))
                 :bank-contact-information (clojure.string/trim (:bankcontactinformation header-raw))
                 :bank-contact-information-details (clojure.string/trim (:bankcontactinformationdetails header-raw))}})))
+
+
+(defn camt-053-001-02 [xml-str]
+  (let [xml (xml/parse-str xml-str)
+        statement (first (:content xml))
+        statements (filter (fn [el] (= (:tag el) :Stmt)) (:content statement))]
+    {:statements (map (fn [el]
+                        (let [zipped (zip/xml-zip el)
+                              entries (map (fn [entry-el]
+                                             (let [zipped (zip/xml-zip entry-el)]
+                                               {:entry-reference (first (xml-> zipped :NtryRef text))
+                                                :amount (read-string (first (xml-> zipped :Amt text)))
+                                                :amount-currency (first (xml-> zipped :Amt (attr :Ccy)))
+                                                :credit-debit-indicator (first (xml-> zipped :CdtDbtInd text))
+                                                :status (first (xml-> zipped :Sts text))
+                                                :booking-date (first (xml-> zipped :BookgDt :Dt text))
+                                                :value-date (first (xml-> zipped :ValDt :Dt text))
+                                                :account-servicer-reference (first (xml-> zipped :AcctSvcrRef text))
+                                                :bank-transaction-code {:domain-code (first (xml-> zipped :BkTxCd :Domn :Cd text))
+                                                                        :domain-family-code (first (xml-> zipped :BkTxCd :Domn :Fmly :Cd text))
+                                                                        :domain-sub-family-code (first (xml-> zipped :BkTxCd :Domn :Fmly :SubFmlyCd text))
+                                                                        :proprietary-code (first (xml-> zipped :BkTxCd :Prtry :Cd text))
+                                                                        :proprietary-issuer (first (xml-> zipped :BkTxCd  :Prtry :Issr text))}
+                                                :entry-details {:transaction-details {:transaction-amount (read-string (first (xml-> zipped :NtryDtls :TxDtls :AmtDtls :TxAmt :Amt text)))
+                                                                                      :transaction-amount-currency (first (xml-> zipped :NtryDtls :TxDtls :AmtDtls :TxAmt :Amt (attr :Ccy)))
+                                                                                      :bank-transaction-code {:domain-code (first (xml-> zipped :NtryDtls :TxDtls :BkTxCd :Domn :Cd text))
+                                                                                                              :domain-family-code (first (xml-> zipped :NtryDtls :TxDtls :BkTxCd :Domn :Fmly :Cd text))
+                                                                                                              :domain-sub-family-code (first (xml-> zipped :NtryDtls :TxDtls :BkTxCd :Domn :Fmly :SubFmlyCd text))
+                                                                                                              :proprietary-code (first (xml-> zipped :NtryDtls :TxDtls :BkTxCd :Prtry :Cd text))
+                                                                                                              :proprietary-issuer (first (xml-> zipped :NtryDtls :TxDtls :BkTxCd  :Prtry :Issr text))}
+                                                                                      :related-dates {:acceptance-date-time (first (xml-> zipped :NtryDtls :TxDtls :RltdDts :AccptncDtTm text))}}}})) (filter (fn [e] (= (:tag e) :Ntry)) (:content el)))
+
+                              balances (map (fn [bal-el]
+                                              (let [zipped (zip/xml-zip bal-el)]
+                                                {:type (first (xml-> zipped :Tp :CdOrPrtry :Cd text))
+                                                 :amount (read-string (first (xml-> zipped :Amt text)))
+                                                 :amount-currency (first (xml-> zipped :Amt (attr :Ccy)))
+                                                 :date (first (xml-> zipped :Dt :Dt text))
+                                                 :credit-debit-indicator (first (xml-> zipped :CdtDbtInd text))
+                                                 :credit-line {:included (= "true" (first (xml-> zipped :CdtLine :Incl text)))
+                                                               :amount (first (xml-> zipped :CdtLine :Amt text))
+                                                               :amount-currency (first (xml-> zipped :CdtLine :Amt (attr :Ccy)))} })) (filter (fn [e] (= (:tag e) :Bal)) (:content el)))]
+                          {:identification (first (xml-> zipped :Id text))
+                           :legal-sequence-number (first (xml-> zipped :LglSeqNb text))
+                           :creation-date-time (first (xml-> zipped :CreDtTm text))
+                           :from-date-time (first (xml-> zipped :FrToDt :FrDtTm text))
+                           :to-date-time (first (xml-> zipped :FrToDt :ToDtTm text))
+                           :account {:iban (first (xml-> zipped :Acct :Id :IBAN text))
+                                     :account-owner-name (first (xml-> zipped :Acct :Nm text))
+                                     :servicer-name (first (xml-> zipped :Acct :Svcr :FinInstnId :Nm text))
+                                     :servicer-bic (first (xml-> zipped :Acct :Svcr :FinInstnId :BIC text))
+                                     :currency (first (xml-> zipped :Acct :Ccy text))}
+                           :transaction-summary {:number-of-entries (read-string (first (xml-> zipped :TxsSummry :TtlNtries :NbOfNtries text)))
+                                                 :number-of-credit-entries (read-string (first (xml-> zipped :TxsSummry :TtlCdtNtries :NbOfNtries text)))
+                                                 :sum-of-credit-entries (read-string (first (xml-> zipped :TxsSummry :TtlCdtNtries :Sum text)))
+                                                 :number-of-debit-entries (read-string (first (xml-> zipped :TxsSummry :TtlDbtNtries :NbOfNtries text)))
+                                                 :sum-of-debit-entries (read-string (first (xml-> zipped :TxsSummry :TtlDbtNtries :Sum text)))}
+                           :entries entries
+                           :balances balances })) statements)}))
+

@@ -1,4 +1,4 @@
-Feature: camt.054.001.02
+Feature: camt.052.001.02
 
 
   Scenario: Parse xml
